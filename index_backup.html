@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="\methodname">
+  <meta name="keywords" content="\methodname">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>\methodname</title>
+
+  <link rel="icon" type="image/x-icon" href="static/images/android-chrome-512x512.png">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <meta property="og:image" content="https://tmpcut3r.github.io/static/images/icon.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Continuous 3D Perception Model with Persistent State">
+<meta name="twitter:description" content="Our unified framework reasons about the 3D world in an online, sequential manner. It continuously updates an internal state using incoming images, enabling accurate metric-scale point cloud reconstructions. Along the way, it also recovers per-frame camera poses, intrinsics, and even infers unseen structures. It supports both video streams and unordered photo collections, and works seamlessly with both static and dynamic scenes.">
+<meta name="twitter:image" content="https://tmpcut3r.github.io/static/images/icon.png">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans:400,600|Noto+Sans:400,600|Castoro:400,600"
+        rel="stylesheet">
+    <link
+    href="https://cdn.jsdelivr.net/npm/modern-normalize@3.0.1/modern-normalize.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.19.0/tabler-icons-outline.min.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
+  <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/css/bulma-carousel.min.css">-->
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@latest/dist/model-viewer.js"></script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script src="./static/js/lazy.js"></script>
+<style>
+.center-image {
+  display: block;
+  margin: 0 auto;
+}
+
+
+.blend-img-item {
+    background: #f5f5f5;
+}
+.item {
+  margin: 10px; /* Adjust the margin size to control the gap between images */
+}
+.blend-img-background {
+    mix-blend-mode: multiply;
+}
+#interactive {
+  position: relative;
+  display: inline-block;
+  width: 768px;
+  aspect-ratio: 16/9;
+  max-width: 100%;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 4px #000;
+  
+}
+#interactive canvas, #interactive #glfailed, #interactive #loading {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+#interactive #glfailed {
+  color: #f88;
+  background: black;
+  display: none;
+}
+#interactive #loading {
+  color: #000;
+  font-size: 32px;
+  font-weight: bold;
+  background: rgba(255,255,255,0.8);
+  display: none;
+}
+.vframe {
+  border-radius: 0.5em;
+  width: 50%;
+  height: auto;
+  aspect-ratio: 32 / 27.5;
+  max-width: 32em;
+  max-height: 27.5em;
+  border: none;
+  box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.15);
+}
+
+model-viewer {
+  border-radius: 0.5em;
+  width: 100%;
+  max-width: 32em; 
+  height: auto;
+  aspect-ratio: 32 / 27.5;
+  border: none;
+  box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.15);
+  }
+
+.siframe-class {
+  display: flex;                    /* side by side layout */
+  flex-wrap: nowrap;                  /* allows items to wrap if not enough space */
+  justify-content: center;          /* center items horizontally in the container */
+  gap: 1vw;                         /* dynamic spacing based on viewport width */
+  padding: 1vw;                     /* padding around the container */
+  align-items: start;
+}
+
+.siframe-class .image-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* two flexible columns */
+  grid-template-rows: repeat(2, 1fr);    /* two flexible rows */
+  gap: 1vw;                               /* dynamic spacing between images */
+  flex: 1 0 40%;                            /* grid takes up half of the viewport width */
+  max-width: 384px;                       /* max width based on original image width */
+}
+
+.siframe-class .image-grid img {
+  width: 100%;                            /* fill grid cell width */
+  height: auto;                           /* auto height to maintain aspect ratio */
+  object-fit: cover;                      /* cover to ensure full cell coverage */
+}
+
+.siframe-class iframe {
+  flex: 1 0 60%;
+  border-radius: 0.5em;
+  max-width: 640px;                       /* max width matches the original design */
+  height: auto;                           /* auto height to maintain aspect ratio */
+  aspect-ratio: 5 / 4;                    /* maintain a fixed aspect ratio */
+  border: none;
+  box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .vframe {
+    width: 100%;
+    /* height: 30em; */
+  }
+
+  model-viewer {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+}
+.load img {
+  width: 100px;
+  height: 70px;
+  object-fit: cover;
+  margin: 4px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 4px #888;
+  border-radius: 6px;
+  vertical-align: bottom;
+}
+.load img:active {
+  box-shadow: 0 0 4px #000;
+  opacity: .8;
+}
+.megabuttons {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  text-transform: uppercase;
+  text-align: left;
+}
+</style>
+</head>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered" style="margin-bottom: 0em">
+        <div class="column is-max-desktop has-text-centered">
+          <h1 class="title is-2 publication-title" style="margin-bottom:0rem">
+            <img src="./static/images/android-chrome-512x512.png" alt="ICON" style="max-width: 96px; vertical-align: middle;">
+            <strong>Continuous 3D Perception Model with Persistent State</strong>
+          </h1>
+        </div>
+	</div>
+      <div class="columns is-centered">
+        <div class="column is-four-fifths has-text-centered">
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://qianqianwang68.github.io/">Qianqian Wang</a><sup>1,2*</sup></span>&nbsp&nbsp&nbsp&nbsp
+            <span class="author-block">
+              <a href="https://forrest-110.github.io/">Yifei Zhang</a><sup>1*</sup>&nbsp&nbsp&nbsp&nbsp
+            </span>
+            <span class="author-block">
+              <a href="https://holynski.org/">Aleksander Holynski</a> <sup>1,2</sup>&nbsp&nbsp&nbsp&nbsp
+            </span>
+            <span class="author-block">
+              <a href="https://people.eecs.berkeley.edu/~efros/">Alexei A Efros</a><sup>1</sup>&nbsp&nbsp&nbsp&nbsp
+            </span>
+            <span class="author-block">
+              <a href="https://people.eecs.berkeley.edu/~kanazawa/">Angjoo Kanazawa</a><sup>1</sup>&nbsp&nbsp&nbsp&nbsp
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>UC Berkeley </span>
+            &nbsp&nbsp&nbsp&nbsp
+            <span class="author-block"><sup>2</sup>Google DeepMind </span>
+            <br>
+            <span class="author-block">(*: equal contribution)</span>
+          </div>
+
+    
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="TODO"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+
+              <span class="link-block">
+<a href="#_interactive" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" style="fill: #ffdf0f"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M256 0c-25.3 0-47.2 14.7-57.6 36c-7-2.6-14.5-4-22.4-4c-35.3 0-64 28.7-64 64V261.5l-2.7-2.7c-25-25-65.5-25-90.5 0s-25 65.5 0 90.5L106.5 437c48 48 113.1 75 181 75H296h8c1.5 0 3-.1 4.5-.4c91.7-6.2 165-79.4 171.1-171.1c.3-1.5 .4-3 .4-4.5V160c0-35.3-28.7-64-64-64c-5.5 0-10.9 .7-16 2V96c0-35.3-28.7-64-64-64c-7.9 0-15.4 1.4-22.4 4C303.2 14.7 281.3 0 256 0zM240 96.1c0 0 0-.1 0-.1V64c0-8.8 7.2-16 16-16s16 7.2 16 16V95.9c0 0 0 .1 0 .1V232c0 13.3 10.7 24 24 24s24-10.7 24-24V96c0 0 0 0 0-.1c0-8.8 7.2-16 16-16s16 7.2 16 16v55.9c0 0 0 .1 0 .1v80c0 13.3 10.7 24 24 24s24-10.7 24-24V160.1c0 0 0-.1 0-.1c0-8.8 7.2-16 16-16s16 7.2 16 16V332.9c-.1 .6-.1 1.3-.2 1.9c-3.4 69.7-59.3 125.6-129 129c-.6 0-1.3 .1-1.9 .2H296h-8.5c-55.2 0-108.1-21.9-147.1-60.9L52.7 315.3c-6.2-6.2-6.2-16.4 0-22.6s16.4-6.2 22.6 0L119 336.4c6.9 6.9 17.2 8.9 26.2 5.2s14.8-12.5 14.8-22.2V96c0-8.8 7.2-16 16-16c8.8 0 16 7.1 16 15.9V232c0 13.3 10.7 24 24 24s24-10.7 24-24V96.1z"></path></svg>
+                  </span>
+		
+                  <span>Interactive Results</span>
+                </a>
+              </span>
+              <!-- Supp Link. -->
+              <span class="link-block">
+                <a href="gallery.html"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-images"></i> 
+                  </span>
+                  <span>Gallery</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark"  disabled>
+                  <span class="icon">
+                      <i class="fab fa-github"></i> 
+                  </span>
+                  <span>Check back later</span>
+                </a>
+              </span>
+
+
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero teaser">
+  <div class="container fluid">
+    <div class="hero-body is-max-widescreen">
+      <center>
+        <video id="teaser" autoplay muted loop playsinline width="80%" style="pointer-events: none;">
+          <source src="./static/videos/teaser_compressed.mp4" type="video/mp4">
+        </video>
+      </center>
+      <div class="columns is-centered">
+        <div class="column is-centered is-four-fifths">
+        <div class="notification is-centered is-info is-rounded"
+          style="text-align: center; padding-bottom: 5px; padding-top: 5px; background-color: #d0d5ec;">
+          <h6 style="text-align: center; color:rgb(0, 0, 0)"> 
+            Our unified framework reasons about the 3D world in an <strong>online, sequential</strong> manner to solve various 3D tasks.
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            We propose a novel unified framework capable of solving a broad range of 3D tasks. At the core of our approach is an online stateful recurrent model that continuously updates its state representation with each new observation. Given a stream of images, our method leverages the evolving state to generate metric-scale pointmaps for each input in an online manner. These pointmaps reside within a common coordinate system, accumulating into a coherent 3D scene reconstruction. Our model captures rich priors of real-world scenes: not only can it predict accurate pointmaps from image observations, but it can also infer unseen structures beyond the coverage of the input images through a raymap probe. Our method is simple yet highly flexible, naturally accepting varying lengths of image sequences and working seamlessly with both video streams and unordered photo collections. We evaluate our method on various 3D/4D tasks including monocular/video depth estimation, camera estimation, multi-view reconstruction, and achieve competitive or state-of-the-art performance. Additionally, we showcase intriguing behaviors enabled by our state representation.
+          </p>
+        </div>
+      </div>
+    </div>
+    </div><br>
+    <!--/ Abstract. -->
+</section>
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+  <a id="_interactive"></a>
+  <h2 class="title is-3">Results</h2>
+    <h3 class="title is-4">4D Reconstruction</h3>
+        <div id="wrapper" style="
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            gap: 2em;
+          ">
+        <iframe class="vframe"
+          src="https://tmpcut3r.github.io/build/?playbackPath=/recordings/006545_mpii_test.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0" loading="lazy"></iframe>
+          <iframe class="vframe"
+          src="https://tmpcut3r.github.io/build/?playbackPath=/recordings/06eb2803.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0" loading="lazy"></iframe>
+        </div>
+        <br>
+        <!-- <div>
+          (Results are downsampled for efficient online rendering)
+        </div> -->
+        <div
+        class="hide-on-touchscreens"
+        style="
+          display: flex;
+          justify-content: center;
+          gap: 1.5em;
+          padding-top: 0.5em;
+        "
+      >
+        <div>
+          <i class="ti ti-view-360-arrow"></i> <strong>Left-click</strong> and
+          drag to rotate
+        </div>
+        <div>
+          <i class="ti ti-arrows-move"></i> <strong>Right-click</strong> and
+          drag or
+          <strong>WASD</strong>
+          to move
+        </div>
+        <div><i class="ti ti-zoom"></i> <strong>Scroll</strong> to zoom</div>
+      </div>
+      <br>
+    <p>
+      Our method can reconstruct 4D dynamic scene in a feed-forward, online manner without global optimization.
+      Click below to explore our interactive results!
+    </p>
+    <br>
+    <a
+      href="./interactive.html"
+      target="_blank"
+      style="position: relative; display: block; overflow: hidden"
+    >
+      <video
+        src="recordings/teaser.mp4"
+        style="opacity: 50%; display: block"
+        width="100%"
+        loop
+        autoplay
+        playsinline
+        muted
+        id="interactive-demo-video"
+        loading="lazy"
+      ></video>
+      <button
+        style="
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: #8e2de2;
+          /* background: linear-gradient(to right, #8e2de2, #4a00e0); */
+          box-shadow: 0 0 2em 0 rgba(255, 255, 50, 1);
+          whitespace: nowrap;
+          width: 200px;
+          height: 50px;
+          color: white;
+          font-size: 16px;
+          border-radius: 25px; /* Rounded corners */
+          border: none; /* Removes any border */
+        "
+      >
+        <i class="ti ti-hand-click"></i>
+        Open Interactive Results
+      </button>
+    </a>
+    <script>
+      // Make this video play slower.
+      document.addEventListener("DOMContentLoaded", function () {
+        var video = document.getElementById("interactive-demo-video");
+        video.playbackRate = 0.6;
+      });
+    </script>
+    </div>
+  </div>
+  </div><br>
+
+  <section class="section has-carousel" id="carousel" style="padding: 0; margin: auto; ">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h3 class="title is-5">More 4D Reconstruction Results</h3>
+    <p> See more examples in our <a href="./gallery.html">gallery</a>.</p>
+  </div>
+  </div>
+  </div>
+  <div id="carousel-results" class="carousel">
+      <div class="item item-vid5">
+        <video poster="" id="" autoplay playsinline muted loop height="450px" width="auto" loading="lazy">
+          <source data-src="./static/videos/bike-packing_Free_1_compressed.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="item item-vid5">
+        <video poster="" id="" autoplay playsinline muted loop height="450px" width="auto" loading="lazy">
+          <source data-src="./static/videos/breakdance-flare_Free_1_compressed.mp4" type="video/mp4">
+        </video>
+      </div>
+      
+      <div class="item item-vid5">
+        <video poster="" id="" autoplay playsinline muted loop height="288px" loading="lazy">
+          <source data-src="./static/videos/stunt_Free_1_compressed.mp4" type="video/mp4">
+        </video>
+      </div>
+      <!-- <div class="item item-vid5">
+        <video poster="" id="" autoplay playsinline muted loop height="288px">
+          <source src="./static/videos/bus_Free_1.mp4" type="video/mp4">
+        </video>
+      </div> -->
+      <div class="item item-vid5">
+        <video poster="" id="" autoplay playsinline muted loop height="450px" width="auto" loading="lazy">
+          <source data-src="./static/videos/camel_Free_1.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="item item-vid5">
+        <video poster="" id="" autoplay playsinline muted loop height="288px" loading="lazy">
+          <source data-src="./static/videos/car-shadow_Free_1.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+    <script>
+      $(window).on('load', function () {
+          bulmaCarousel.attach('#carousel-results', {
+            slidesToScroll: 3,
+            slidesToShow: 3,
+            loop: true,
+            infinite: true,
+            initialSlide: 2,
+            autoplay: false,
+            autoplaySpeed: 3000,
+            pagination: false,
+          });
+    
+      });
+    </script>
+  </section>
+
+  <br>
+  <br>
+
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-4">3D Reconstruction</h2>
+        
+        <p>Our method reconstructs the 3D static scene in a feed-forward, online manner without global optimization, both from videos and sparse image collections.</p>
+        <br>
+      <br>
+      <h3 class="title is-5">Video Reconstruction</h3>
+        <div id="wrapper" style="
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            gap: 2em;
+          ">
+        <iframe class="vframe"
+          src="https://tmpcut3r.github.io/build/?playbackPath=/static/recordings/3d_2_025_gd4.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0" loading="lazy"></iframe>
+          <iframe class="vframe"
+          src="https://tmpcut3r.github.io/build/?playbackPath=/static/recordings/3d_2_018_gd4.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0" loading="lazy"></iframe>
+        </div>
+        <br>
+        <div>
+          (Results are downsampled for efficient online rendering)
+        </div>
+        <div
+        class="hide-on-touchscreens"
+        style="
+          display: flex;
+          justify-content: center;
+          gap: 1.5em;
+          padding-top: 0.5em;
+        "
+      >
+        <div>
+          <i class="ti ti-view-360-arrow"></i> <strong>Left-click</strong> and
+          drag to rotate
+        </div>
+        <div>
+          <i class="ti ti-arrows-move"></i> <strong>Right-click</strong> and
+          drag or
+          <strong>WASD</strong>
+          to move
+        </div>
+        <div><i class="ti ti-zoom"></i> <strong>Scroll</strong> to zoom</div>
+      </div>
+
+      <br>
+      <br>
+      <h3 class="title is-5">Sparse Image Collection</h3>
+        <div id="wrapper" style="
+      
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 2em;
+          ">
+          <div class="siframe-class">
+            <div class="image-grid">
+              <img src="./static/recordings/seq_013_0001.png" alt="Image 1" loading="lazy">
+              <img src="./static/recordings/seq_013_0002.png" alt="Image 2" loading="lazy">
+              <img src="./static/recordings/seq_013_0003.png" alt="Image 3" loading="lazy">
+              <img src="./static/recordings/seq_013_0004.png" alt="Image 4" loading="lazy">
+            </div>
+        <iframe
+          src="https://tmpcut3r.github.io/build/?playbackPath=/static/recordings/seq_013_1_0.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=-1.0,0.0,0.0" loading="lazy">
+        </iframe>
+        </div>
+        <div class="siframe-class">
+          <div class="image-grid">
+            <img src="./static/recordings/seqs_017_0001.png" alt="Image 1" loading="lazy">
+            <img src="./static/recordings/seqs_017_0002.png" alt="Image 2" loading="lazy">
+            <img src="./static/recordings/seqs_017_0003.png" alt="Image 3" loading="lazy">
+            <img src="./static/recordings/seqs_017_0004.png" alt="Image 4" loading="lazy">
+          </div>
+      <iframe
+        src="https://tmpcut3r.github.io/build/?playbackPath=/static/recordings/seqs_017_1_0.viser&initialCameraPosition=-6.0,2.5,5.0&initialCameraLookAt=5.0,8.0,0.0" loading="lazy">
+      </iframe>
+      </div>
+          </div>
+          <!-- <br>
+        <div>
+          (Results are downsampled <strong>4 times</strong> for efficient online rendering)
+        </div> -->
+        <div
+        class="hide-on-touchscreens"
+        style="
+          display: flex;
+          justify-content: center;
+          gap: 1.5em;
+          padding-top: 0.5em;
+        "
+      >
+        <div>
+          <i class="ti ti-view-360-arrow"></i> <strong>Left-click</strong> and
+          drag to rotate
+        </div>
+        <div>
+          <i class="ti ti-arrows-move"></i> <strong>Right-click</strong> and
+          drag or
+          <strong>WASD</strong>
+          to move
+        </div>
+        <div><i class="ti ti-zoom"></i> <strong>Scroll</strong> to zoom</div>
+      </div>
+
+      </div>
+    </div>
+    </div><br>
+</section>
+
+
+<section class="section has-carousel" id="carousel" style="padding: 0; margin: auto; ">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h3 class="title is-5">More 3D Reconstruction Results</h3>
+  <p> See more examples in our <a href="./gallery_3D.html">gallery</a>.</p>
+</div>
+</div>
+</div>
+</section>
+
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+  <h2 class="title is-3">Infer Unseen Structure</h2>
+    <p>
+      Given a camera query and the current reconstruction result, our method can infer the unseen structure from a novel viewpoint, outputting both a depth map and RGB image at the new view.
+    </p>
+    <br>
+    <video width="100%" controls preload="none" poster="./static/images/unseen_poster.jpg">
+      <source src="./static/videos/unseen.mp4" type="video/mp4">
+    </video>
+    </div>
+  </div>
+  </div><br>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">State Analysis</h2>
+        <div class="columns is-centered has-text-justified">
+        <p>
+          Our model continuously updates
+ its state representation as new data arrives. As more observations accumulate, the state should
+ be able to refine its understanding of the 3D world, leading
+ to improved predictions. Compared to online, revisiting
+ incorporates global context which improves overall reconstruction
+ results, especially in the highlighted regions.
+
+          We demonstrate this capability of our method below.
+          we feed the observations twice, allowing the state to keep updating in the second pass, 
+          and report the reconstruction results <strong>before and after</strong> the revisiting process.
+        </p>
+      </div>
+        <br>
+        <br>
+        
+        <h3><strong>Input Images</strong></h3>
+        <div id="state-analysis-input" class="carousel">
+          <div class="item">
+            <img src="./static/glbs/41126410_2253.870.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2297.086.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2299.086.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2301.085.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2303.084.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2305.083.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2307.082.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2309.081.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2311.081.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2313.080.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2315.079.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2317.078.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2319.077.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2321.077.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+          <div class="item">
+            <img src="./static/glbs/41126410_2323.076.jpg" alt="MY ALT TEXT" loading="lazy"/>
+          </div>
+        </div>
+        <script>
+          $(window).on('load', function () {
+              bulmaCarousel.attach('#state-analysis-input', {
+                  slidesToScroll: 5,
+                  slidesToShow: 5,
+                  loop: false,
+                  autoplay: false,
+              });
+        
+          });
+        </script>
+        
+        <br>
+        <br>
+        <div id="wrapper" style="
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 2em;
+      ">
+      <div style="flex: 1 1 auto;">
+        <h3><strong>Streaming (1st visit)</strong></h3>
+        <br>
+    <!-- <iframe class="vframe"
+      src="https://tmpcut3r.github.io/build/?playbackPath=/static/recordings/revisit-0.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0&baseSpeed=0.5">
+    </iframe> -->
+    <model-viewer id="model1" src="./static/glbs_gd/revisit-0.glb" alt="Streaming (1st visit)" camera-controls interaction-prompt="none">
+    </model-viewer>
+    </div>
+    <div style="flex: 1 1 auto;">
+      <h3><strong>Revisiting (2nd visit)</strong></h3>
+      <br>
+      <!-- <iframe class="vframe"
+      src="https://tmpcut3r.github.io/build/?playbackPath=/static/recordings/revisit-1.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0&baseSpeed=0.5">
+    </iframe> -->
+    <model-viewer id="model2" src="./static/glbs_gd/revisit-1.glb" alt="Revisiting (2nd visit)" camera-controls interaction-prompt="none">
+    </model-viewer>
+    </div>
+    </div>
+    <script>
+      // Grab references to both <model-viewer> elements
+      const model1 = document.getElementById('model1');
+      const model2 = document.getElementById('model2');
+  
+      // This flag prevents us from triggering a sync loop
+      let syncing = false;
+  
+      // We'll use these variables to store the timeout IDs for debouncing
+      let syncTimeout1 = null;
+      let syncTimeout2 = null;
+  
+      // How long to wait (in ms) after the user stops moving the camera
+      // before we sync to the other model
+      const SYNC_DELAY_MS = 100;
+  
+      /**
+       * Whenever model1's camera changes, wait briefly to see if the user
+       * continues moving the camera. If they don't, sync model1's camera to model2.
+       */
+      model1.addEventListener('camera-change', () => {
+        if (!syncing) {
+          // Clear any pending sync timeouts for model1
+          if (syncTimeout1) {
+            clearTimeout(syncTimeout1);
+          }
+          // Set a new timeout
+          syncTimeout1 = setTimeout(() => {
+            syncing = true;
+            copyCameraSettings(model1, model2);
+            // Use requestAnimationFrame to delay resetting the flag slightly
+            requestAnimationFrame(() => {
+              syncing = false;
+            });
+          }, SYNC_DELAY_MS);
+        }
+      });
+  
+      /**
+       * Whenever model2's camera changes, do the same but in reverse.
+       */
+      model2.addEventListener('camera-change', () => {
+        if (!syncing) {
+          if (syncTimeout2) {
+            clearTimeout(syncTimeout2);
+          }
+          syncTimeout2 = setTimeout(() => {
+            syncing = true;
+            copyCameraSettings(model2, model1);
+            requestAnimationFrame(() => {
+              syncing = false;
+            });
+          }, SYNC_DELAY_MS);
+        }
+      });
+  
+      /**
+       * Copies the camera orbit and field of view from sourceModel to targetModel.
+       * This function does NOT trigger a new animation loop automatically.
+       */
+      function copyCameraSettings(sourceModel, targetModel) {
+        // Get current camera orbit and FOV from the source
+        const orbit = sourceModel.getCameraOrbit();    // returns {theta, phi, radius}
+        const fieldOfView = sourceModel.getFieldOfView(); // returns a number in degrees
+        const target = sourceModel.getCameraTarget();
+        // Apply them to the target (in the correct format)
+        targetModel.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius}m`;
+        targetModel.fieldOfView = `${fieldOfView}deg`;
+        targetModel.cameraTarget = `${target.x}m ${target.y}m ${target.z}m`;
+        // If you want an immediate snap to that camera position (no transition), uncomment:
+        // targetModel.jumpCameraToGoal();
+      }
+    </script>
+    <br>
+    <div>
+      (Results are downsampled for efficient online rendering)
+    </div>
+    <div
+    class="hide-on-touchscreens"
+    style="
+      display: flex;
+      justify-content: center;
+      gap: 1.5em;
+      padding-top: 0.5em;
+    "
+  >
+    <div>
+      <i class="ti ti-view-360-arrow"></i> <strong>Left-click</strong> and
+      drag to rotate
+    </div>
+    <div>
+      <i class="ti ti-arrows-move"></i> <strong>Right-click</strong> and
+      drag or
+      <strong>WASD</strong>
+      to move
+    </div>
+    <div><i class="ti ti-zoom"></i> <strong>Scroll</strong> to zoom</div>
+  </div>
+
+  <br>
+  <br>
+
+
+  <h3><strong>Input Images</strong></h3>
+  <div id="state-analysis-input-2" class="carousel">
+    <div class="item">
+      <img src="./static/glbs2/frame0235.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+    <div class="item">
+      <img src="./static/glbs2/frame0215.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+    <div class="item">
+      <img src="./static/glbs2/frame0195.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+    <div class="item">
+      <img src="./static/glbs2/frame0175.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+    <div class="item">
+      <img src="./static/glbs2/frame0155.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+    <div class="item">
+      <img src="./static/glbs2/frame0135.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+    <div class="item">
+      <img src="./static/glbs2/frame0115.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+    <div class="item">
+      <img src="./static/glbs2/frame0095.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+    <div class="item">
+      <img src="./static/glbs2/frame0075.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+    <div class="item">
+      <img src="./static/glbs2/frame0055.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+    <div class="item">
+      <img src="./static/glbs2/frame0035.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+    <div class="item">
+      <img src="./static/glbs2/frame0015.png" alt="MY ALT TEXT" loading="lazy"/>
+    </div>
+  </div>
+  <script>
+    $(window).on('load', function () {
+        bulmaCarousel.attach('#state-analysis-input-2', {
+            slidesToScroll: 4,
+            slidesToShow: 4,
+            loop: false,
+            autoplay: false,
+        });
+  
+    });
+  </script>
+  
+  <br>
+  <br>
+  <div id="wrapper" style="
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2em;
+">
+<div style="flex: 1 1 auto;">
+  <h3><strong>Streaming (1st visit)</strong></h3>
+  <br>
+<!-- <iframe class="vframe"
+src="https://tmpcut3r.github.io/build/?playbackPath=/static/recordings/revisit-0.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0&baseSpeed=0.5">
+</iframe> -->
+<model-viewer id="model3" src="./static/glbs_gd/revisit2-0.glb" alt="Streaming (1st visit)" camera-controls interaction-prompt="none">
+</model-viewer>
+</div>
+<div style="flex: 1 1 auto;">
+<h3><strong>Revisiting (2nd visit)</strong></h3>
+<br>
+<!-- <iframe class="vframe"
+src="https://tmpcut3r.github.io/build/?playbackPath=/static/recordings/revisit-1.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0&baseSpeed=0.5">
+</iframe> -->
+<model-viewer id="model4" src="./static/glbs_gd/revisit2-1.glb" alt="Revisiting (2nd visit)" camera-controls interaction-prompt="none">
+</model-viewer>
+</div>
+</div>
+<script>
+  // Grab references to both <model-viewer> elements
+  const model3 = document.getElementById('model3');
+  const model4 = document.getElementById('model4');
+
+  // This flag prevents us from triggering a sync loop
+  let syncing2 = false;
+
+  // We'll use these variables to store the timeout IDs for debouncing
+  let syncTimeout12 = null;
+  let syncTimeout22 = null;
+
+  // How long to wait (in ms) after the user stops moving the camera
+  // before we sync to the other model
+  const SYNC_DELAY_MS2 = 100;
+
+  /**
+   * Whenever model1's camera changes, wait briefly to see if the user
+   * continues moving the camera. If they don't, sync model1's camera to model2.
+   */
+  model3.addEventListener('camera-change', () => {
+    if (!syncing2) {
+      // Clear any pending sync timeouts for model1
+      if (syncTimeout12) {
+        clearTimeout(syncTimeout12);
+      }
+      // Set a new timeout
+      syncTimeout12 = setTimeout(() => {
+        syncing2 = true;
+        copyCameraSettings(model3, model4);
+        // Use requestAnimationFrame to delay resetting the flag slightly
+        requestAnimationFrame(() => {
+          syncing2 = false;
+        });
+      }, SYNC_DELAY_MS2);
+    }
+  });
+
+  /**
+   * Whenever model2's camera changes, do the same but in reverse.
+   */
+  model4.addEventListener('camera-change', () => {
+    if (!syncing2) {
+      if (syncTimeout22) {
+        clearTimeout(syncTimeout22);
+      }
+      syncTimeout22 = setTimeout(() => {
+        syncing2 = true;
+        copyCameraSettings(model4, model3);
+        requestAnimationFrame(() => {
+          syncing2 = false;
+        });
+      }, SYNC_DELAY_MS2);
+    }
+  });
+
+  /**
+   * Copies the camera orbit and field of view from sourceModel to targetModel.
+   * This function does NOT trigger a new animation loop automatically.
+   */
+  function copyCameraSettings(sourceModel, targetModel) {
+    // Get current camera orbit and FOV from the source
+    const orbit = sourceModel.getCameraOrbit();    // returns {theta, phi, radius}
+    const fieldOfView = sourceModel.getFieldOfView(); // returns a number in degrees
+    const target = sourceModel.getCameraTarget();
+
+    // Apply them to the target (in the correct format)
+    targetModel.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius}m`;
+    targetModel.fieldOfView = `${fieldOfView}deg`;
+    targetModel.cameraTarget = `${target.x}m ${target.y}m ${target.z}m`;
+
+    // If you want an immediate snap to that camera position (no transition), uncomment:
+    // targetModel.jumpCameraToGoal();
+  }
+</script>
+<br>
+<div>
+(Results are downsampled for efficient online rendering)
+</div>
+<div
+class="hide-on-touchscreens"
+style="
+display: flex;
+justify-content: center;
+gap: 1.5em;
+padding-top: 0.5em;
+"
+>
+<div>
+<i class="ti ti-view-360-arrow"></i> <strong>Left-click</strong> and
+drag to rotate
+</div>
+<div>
+<i class="ti ti-arrows-move"></i> <strong>Right-click</strong> and
+drag or
+<strong>WASD</strong>
+to move
+</div>
+<div><i class="ti ti-zoom"></i> <strong>Scroll</strong> to zoom</div>
+</div>
+
+
+
+
+
+
+
+
+
+        
+</div>
+</div>
+</div><br>
+</section>
+
+
+<section class="section">
+  <div class="columns is-centered has-text-centered">
+    <div class="column is-four-fifths">
+      <h2 class="title is-3">Method Overview</h2>
+      <div class="content has-text-centered">
+        <div>
+        <img src="./static/images/method1.png" alt="Reconstruction" class="blend-img-background center-image" width="80%" loading="lazy"/>
+        </div>
+        <div class="content has-text-justified">
+        <p>
+        Given a sequence of images as input, our method performs online dense 3D reconstruction. 
+
+        At the core of our method is a state representation that keeps updating as each new observation comes in.
+
+        Given the current image, we first use a vit encoder to encode it into token representations.
+        The image tokens then interact with the state tokens through a joint process of state update and state readout. The final outputs from state readout are the pointmaps and camera parameters for the current observation. At the same time, the state update module incorporates the current observation to update the state.
+
+        We repeat the process for every image, and their outputs accumulate into dense scene reconstruction over time.
+        </p>
+        </div>
+
+        <div>
+        <img src="./static/images/method2.png" alt="Inference" class="blend-img-background center-image" width="80%" loading="lazy"/>
+        </div>
+        <div class="level-set has-text-justified">
+        <p>
+        Not only can our method reconstructs the scene given image observations, it can also infer new structures unseen by the input images.
+        Given a query camera as shown as the blue camera, we use its raymap to query the current state  to read out its corresponding point map.
+        Adding this inferred point map to the existing reconstruction makes the reconstruction more complete.
+      </p> 
+    </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section">
+  <!-- <div class="columns is-centered has-text-centered">
+    <div class="column is-half">
+      <h2 class="title is-3">Explainer Video</h2>
+      <div class="publication-video">
+        <a id="overview_video"></a>
+        <video width="100%" controls>
+          <source src="./static/videos/explainer.mp4" type="video/mp4">
+        </video> -->
+        <!-- <iframe src="https://youtube.com/embed/swigYTCdoiw" frameborder="0" allow="encrypted-media" allowfullscreen></iframe> -->
+      <!-- </div>
+    </div>
+  </div> -->
+
+<div class="columns is-centered has-text-centered">
+  <div class="column is-half"><br><br>
+    <h2 class="title is-3">Acknowledgements</h2>
+    <div class="content has-text-justified">
+        Anything
+    </div>
+  </div>
+</div>
+
+
+</section>
+
+<br>
+
+
+
+
+<section class="section" id="BibTeX">
+<div class="container  content">
+  <h2 class="title">BibTeX</h2>
+  <pre><code>TODO</code></pre>
+</div>
+</section>
+
+
+<footer class="footer">
+<div align="center" class="container">
+  <div class="columns is-centered">
+      <div class="content">
+          Design borrowed from <a href="https://github.com/nerfies/nerfies.github.io">nerfies</a>.
+      </div>
+  </div>
+</div>
+</footer>
+
+<body>
+</body>
+</html>

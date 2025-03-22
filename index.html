@@ -1,1 +1,1219 @@
-<h1> test </h1>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="An online 3D reasoning framework for various 3D tasks from only RGB inputs.">
+    <meta name="keywords" content="EgoMono4D">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EgoMono4D: Self-Supervised Monocular 4D Scene Reconstruction for Egocentric Videos</title>
+
+    <link rel="icon" type="image/x-icon" href="static/images/egomono4d_icon.png">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-PYVRSFMDRL');
+    </script>
+
+    <meta property="og:image" content="https://egomono4d.github.io/static/images/egomono4d_icon.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EgoMono4D: Self-Supervised Monocular 4D Scene Reconstruction for Egocentric Videos">
+    <meta name="twitter:description"
+        content="An online 3D reasoning framework for various 3D tasks from only RGB inputs.">
+    <meta name="twitter:image" content="https://egomono4d.github.io/static/images/icon.png">
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans:400,600|Noto+Sans:400,600|Castoro:400,600"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/modern-normalize@3.0.1/modern-normalize.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.19.0/tabler-icons-outline.min.css"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@latest/dist/model-viewer.js"></script>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script defer src="./static/js/bulma-carousel.min.js"></script>
+    <script defer src="./static/js/index.js"></script>
+    <script defer src="./static/js/lazy.js"></script>
+    <style>
+        .center-image {
+            display: block;
+            margin: 0 auto;
+        }
+
+
+        .blend-img-item {
+            background: #f5f5f5;
+        }
+
+        .item {
+            margin: 10px;
+        }
+
+        .blend-img-background {
+            mix-blend-mode: multiply;
+        }
+
+        #interactive {
+            position: relative;
+            display: inline-block;
+            width: 768px;
+            aspect-ratio: 16/9;
+            max-width: 100%;
+            border: 2px solid #fff;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 0 4px #000;
+
+        }
+
+        #interactive canvas,
+        #interactive #glfailed,
+        #interactive #loading {
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+
+        #interactive #glfailed {
+            color: #f88;
+            background: black;
+            display: none;
+        }
+
+        #interactive #loading {
+            color: #000;
+            font-size: 32px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.8);
+            display: none;
+        }
+
+        .iframe-container {
+            width: 50%;
+            max-width: 32em;
+        }
+
+        .vframe {
+            border-radius: 0.5em;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 32 / 27.5;
+            max-width: 32em;
+            max-height: 27.5em;
+            border: none;
+            box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.15);
+        }
+
+        .large-vframe {
+            border-radius: 0.5em;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 32 / 18;
+            max-width: 64em;
+            max-height: 36em;
+            border: none;
+            box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.15);
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px 0;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .modelviewer-container {
+            width: 50%;
+            max-width: 32em;
+        }
+
+        model-viewer {
+            border-radius: 0.5em;
+            width: 100%;
+            max-width: 32em;
+            max-height: 27.5em;
+            height: auto;
+            aspect-ratio: 32 / 27.5;
+            border: none;
+            box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.15);
+        }
+
+        .siframe-class {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            gap: 1vw;
+            padding: 1vw;
+            align-items: start;
+        }
+
+        .siframe-class .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 1vw;
+            flex: 1 0 40%;
+            max-width: 384px;
+        }
+
+        .siframe-class .image-grid img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .siframe-class .iframe-container {
+            flex: 1 0 60%;
+            max-width: 640px;
+        }
+
+        .siframe-class iframe {
+            width: 100%;
+            border-radius: 0.5em;
+            max-width: 640px;
+            height: auto;
+            aspect-ratio: 5 / 4;
+            border: none;
+            box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+
+            .large-vframe {
+                width: 100%;
+            }
+
+            .iframe-container {
+                width: 100%;
+            }
+
+            model-viewer {
+                max-width: 100%;
+                margin: 0 auto;
+            }
+        }
+
+        .load img {
+            width: 100px;
+            height: 70px;
+            object-fit: cover;
+            margin: 4px;
+            border: 2px solid #fff;
+            box-shadow: 0 0 4px #888;
+            border-radius: 6px;
+            vertical-align: bottom;
+        }
+
+        .load img:active {
+            box-shadow: 0 0 4px #000;
+            opacity: .8;
+        }
+
+        .megabuttons {
+            position: absolute;
+            left: 5px;
+            bottom: 5px;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        nav {
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            width: 100%;
+            gap: 10px;
+        }
+
+        nav ul li {
+            flex: 1;
+            display: flex;
+            margin: 0;
+        }
+
+        nav ul li a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            color: #363636;
+            padding: 10px 20px;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            min-height: 50px;
+            flex-grow: 1;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+
+        nav ul li a:hover {
+            background-color: #e4e4e4;
+            transform: scale(1.05);
+        }
+
+        nav ul li a:active {
+            background-color: #d3d3d3;
+            transform: scale(0.95);
+        }
+
+        nav ul li a.active {
+            background-color: #cccccc; /* Change color to indicate active tab */
+            color: #000000; /* Optional: Change text color if needed */
+        }
+
+
+        .dynamic-section {
+            display: none;
+            padding: 1rem 0;
+        }
+
+
+
+        .grid-container-2x6 {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 10px;
+            padding: 20px;
+            max-width: 80%;
+            margin: auto;
+        }
+
+        .grid-container-2x6 img {
+            width: 100%;
+            height: auto;
+        }
+
+        .grid-container-1x6 {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(1, auto);
+            gap: 10px;
+            padding: 20px;
+            max-width: 80%;
+            margin: auto;
+        }
+
+        .grid-container-1x6 img {
+            width: 100%;
+            height: auto;
+        }
+
+        .panel-style {
+            background-color: #fafafa;
+            padding: 20px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered" style="margin-bottom: 0em">
+                    <div class="column is-max-desktop has-text-centered">
+                        <h1 class="title is-2 publication-title" style="margin-bottom:0rem">
+                            <strong>EgoMono4D: Self-Supervised Monocular 4D Scene Reconstruction for Egocentric Videos</strong>
+                        </h1>
+                    </div>
+                </div>
+                <div class="columns is-centered">
+                    <div class="column is-four-fifths has-text-centered">
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block">
+                                <a href="https://michaelyuancb.github.io/">Chengbo Yuan</a><sup>1,2,3</sup></span>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span class="author-block">
+                                <a href="https://jc043.github.io/">Geng Chen</a><sup>2,4</sup>&nbsp;&nbsp;&nbsp;&nbsp;
+                            </span>
+                            <span class="author-block">
+                                <a href="https://ericyi.github.io/">Li Yi</a>
+                                <sup>1,2,3</sup>&nbsp;&nbsp;&nbsp;&nbsp;
+                            </span>
+                            <span class="author-block">
+                                <a href="https://yang-gao.weebly.com/">Yang Gao</a><sup>1,2,3</sup>&nbsp;&nbsp;&nbsp;&nbsp;
+                            </span>
+                        </div>
+
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block"><sup>1</sup>Tsinghua University</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <span class="author-block"><sup>2</sup>Shanghai Artificial Intelligence Laboratory</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <span class="author-block"><sup>3</sup>Shanghai Qi Zhi Institute</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <span class="author-block"><sup>4</sup>UC San Diego</span>
+                        </div>
+
+                        <br>
+
+                        <div class="column has-text-centered">
+                            <div class="publication-links">
+                                <span class="link-block">
+                                    <a href="egomono4d.pdf" target="_blank"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <svg class="svg-inline--fa fa-file-pdf fa-w-12" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-pdf" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M181.9 256.1c-5-16-4.9-46.9-2-46.9 8.4 0 7.6 36.9 2 46.9zm-1.7 47.2c-7.7 20.2-17.3 43.3-28.4 62.7 18.3-7 39-17.2 62.9-21.9-12.7-9.6-24.9-23.4-34.5-40.8zM86.1 428.1c0 .8 13.2-5.4 34.9-40.2-6.7 6.3-29.1 24.5-34.9 40.2zM248 160h136v328c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V24C0 10.7 10.7 0 24 0h200v136c0 13.2 10.8 24 24 24zm-8 171.8c-20-12.2-33.3-29-42.7-53.8 4.5-18.5 11.6-46.6 6.2-64.2-4.7-29.4-42.4-26.5-47.8-6.8-5 18.3-.4 44.1 8.1 77-11.6 27.6-28.7 64.6-40.8 85.8-.1 0-.1.1-.2.1-27.1 13.9-73.6 44.5-54.5 68 5.6 6.9 16 10 21.5 10 17.9 0 35.7-18 61.1-61.8 25.8-8.5 54.1-19.1 79-23.2 21.7 11.8 47.1 19.5 64 19.5 29.2 0 31.2-32 19.7-43.4-13.9-13.6-54.3-9.7-73.6-7.2zM377 105L279 7c-4.5-4.5-10.6-7-17-7h-6v128h128v-6.1c0-6.3-2.5-12.4-7-16.9zm-74.1 255.3c4.1-2.7-2.5-11.9-42.8-9 37.1 15.8 42.8 9 42.8 9z"></path></svg>
+                                        </span>
+                                        <span>Paper</span>
+                                    </a>
+                                </span>
+
+                                <span class="link-block">
+                                    <a href="https://arxiv.org/abs/2411.09145" class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="ai ai-arxiv"></i>
+                                        </span>
+                                        <span>arXiv</span>
+                                    </a>
+                                </span>
+                                <!-- Video Link. -->
+
+                                <span class="link-block">
+                                    <a href="interactive.html" target="_blank"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"
+                                                style="fill: #ffdf0f">
+                                                <path
+                                                    d="M256 0c-25.3 0-47.2 14.7-57.6 36c-7-2.6-14.5-4-22.4-4c-35.3 0-64 28.7-64 64V261.5l-2.7-2.7c-25-25-65.5-25-90.5 0s-25 65.5 0 90.5L106.5 437c48 48 113.1 75 181 75H296h8c1.5 0 3-.1 4.5-.4c91.7-6.2 165-79.4 171.1-171.1c.3-1.5 .4-3 .4-4.5V160c0-35.3-28.7-64-64-64c-5.5 0-10.9 .7-16 2V96c0-35.3-28.7-64-64-64c-7.9 0-15.4 1.4-22.4 4C303.2 14.7 281.3 0 256 0zM240 96.1c0 0 0-.1 0-.1V64c0-8.8 7.2-16 16-16s16 7.2 16 16V95.9c0 0 0 .1 0 .1V232c0 13.3 10.7 24 24 24s24-10.7 24-24V96c0 0 0 0 0-.1c0-8.8 7.2-16 16-16s16 7.2 16 16v55.9c0 0 0 .1 0 .1v80c0 13.3 10.7 24 24 24s24-10.7 24-24V160.1c0 0 0-.1 0-.1c0-8.8 7.2-16 16-16s16 7.2 16 16V332.9c-.1 .6-.1 1.3-.2 1.9c-3.4 69.7-59.3 125.6-129 129c-.6 0-1.3 .1-1.9 .2H296h-8.5c-55.2 0-108.1-21.9-147.1-60.9L52.7 315.3c-6.2-6.2-6.2-16.4 0-22.6s16.4-6.2 22.6 0L119 336.4c6.9 6.9 17.2 8.9 26.2 5.2s14.8-12.5 14.8-22.2V96c0-8.8 7.2-16 16-16c8.8 0 16 7.1 16 15.9V232c0 13.3 10.7 24 24 24s24-10.7 24-24V96.1z">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                        <span>Interactive Results</span>
+                                    </a>
+                                </span>
+
+                                <span class="link-block">
+                                    <a href="https://github.com/michaelyuancb/egomono4d" class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-github"></i>
+                                        </span>
+                                        <span>Code</span>
+                                    </a>
+                                </span>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="hero teaser">
+        <div class="container fluid">
+            <div class="hero-body is-max-widescreen">
+                <div class="columns is-centered">
+                    <div class="column is-centered is-full">
+                        <div class="notification is-centered is-info is-rounded"
+                            style="text-align: center; padding-bottom: 5px; padding-top: 5px; background-color: #ffffff;">
+                            <h6 style="text-align: center; color:rgb(0, 0, 0); font-size: 18px">
+                                <strong>TL;DR:</strong> Achieve Fast 4D Reconstruction for Egocentric Videos with <strong>Label-Free Self-Supervised</strong> Method.
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+                <center>
+                    <video id="teaser" preload="auto" autoplay muted loop playsinline width="95%"
+                        style="pointer-events: none;">
+                        <source src="./static/videos/cut3r_factory.mp4" type="video/mp4">
+                    </video>
+                </center>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="section has-background-light">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Abstract</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            We present a unified framework capable of solving a broad
+                            range of 3D tasks. Our approach features a stateful recurrent
+                            model that continuously updates its state representation with
+                            each new observation. Given a stream of images, this evolving state can be used to generate
+                            metric-scale pointmaps
+                            (per-pixel 3D points) for each new input in an online fashion.
+                            These pointmaps reside within a common coordinate system,
+                            and can be accumulated into a coherent, dense scene reconstruction that updates as new
+                            images arrive. Our model,
+                            called <strong>CUT3R</strong> (<strong>C</strong>ontinuous <strong>U</strong>pdating
+                            <strong>T</strong>ransformer for <strong>3D</strong>
+                            <strong>R</strong>econstruction), captures rich priors of real-world scenes:
+                            not only can it predict accurate pointmaps from image observations, but it can also infer
+                            unseen regions of the scene
+                            by probing at virtual, unobserved views. Our method is simple yet highly flexible, naturally
+                            accepting varying length of
+                            images that may be either video streams or unordered photo
+                            collections, containing both static and dynamic content. We
+                            evaluate our method on various 3D/4D tasks and demonstrate competitive or state-of-the-art
+                            performance in each.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div><br>
+    </section>
+
+    <section class="section">
+    <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+            <div class="column is-four-fifths">
+                <h2 class="title is-3">Results</h2>
+                <p>
+                    Our unified framework tackles various 3D tasks. Select each tab below to explore the results for
+                    each task.
+                </p>
+                <nav>
+                    <ul>
+                        <li><a id="nav1" href="javascript:void(0);" onclick="showSection('video_4d');setActive('nav1');">Dynamic
+                                Scene
+                                Reconstruction</a></li>
+                        <li><a id="nav2" href="javascript:void(0);" onclick="showSection('video_3d');setActive('nav2');">3D
+                                Reconstruction
+                                (Video)</a></li>
+                        <li><a id="nav3" href="javascript:void(0);" onclick="showSection('photo');setActive('nav3');">3D
+                                Reconstruction (Photo
+                                Collection)</a>
+                        </li>
+                        <li><a id="nav4" href="javascript:void(0);" onclick="showSection('unseen');setActive('nav4');">Inferring
+                                Unseen Structure</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <script>
+                function setActive(activeId) {
+                    // Remove 'active' class from all links
+                    document.querySelectorAll('nav ul li a').forEach(function(link) {
+                        link.classList.remove('active');
+                    });
+                
+                    // Add 'active' class to the clicked link
+                    document.getElementById(activeId).classList.add('active');
+                }
+                </script>
+        </div>
+    </div>
+    <script defer src="./static/js/nav.js"></script>
+
+    <section id="video_4d" class="section dynamic-section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full  panel-style">
+                    <h3 class="title is-4">Dynamic Scene Reconstruction</h3>
+                    <p>
+                        Our method can reconstruct dynamic scenes in a feed-forward, online manner without per-video
+                        optimization.
+                    </p>
+                    <br>
+                    <div id="wrapper" style="
+              display: flex;
+              flex-wrap: nowrap;
+              justify-content: center;
+              align-items: center;
+              gap: 2em;
+            ">
+                        <div class="iframe-container">
+                        <iframe class="vframe"
+                            src="https://egomono4d.github.io/build/?playbackPath=/recordings/006545_mpii_test.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0&baseSpeed=0.8"
+                            loading="lazy"></iframe>
+                            <button onclick="openInNewTab(this)" data-link="https://egomono4d.github.io/build/?playbackPath=/recordings/006545_mpii_test.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0&synchronizedVideoOverlay=/recordings/006545_mpii_test.mp4&baseSpeed=0.8">Open in New Tab for Better Visualization</button>
+                        </div>
+                        <div class="iframe-container">
+                        <iframe class="vframe"
+                            src="https://egomono4d.github.io/build/?playbackPath=/recordings/06eb2803.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0&baseSpeed=0.8"
+                            loading="lazy"></iframe>
+                            <button onclick="openInNewTab(this)" data-link="https://egomono4d.github.io/build/?playbackPath=/recordings/06eb2803.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0&synchronizedVideoOverlay=/recordings/06eb2803.mp4&baseSpeed=0.8">Open in New Tab for Better Visualization</button>
+                        </div>
+                    </div>
+                    <br>
+                    <!-- <div>
+            (Results are downsampled for efficient online rendering)
+          </div> -->
+                    <div class="hide-on-touchscreens" style="
+            display: flex;
+            justify-content: center;
+            gap: 1.5em;
+            padding-top: 0.5em;
+          ">
+                        <div>
+                            <i class="ti ti-view-360-arrow"></i> <strong>Left-click</strong> and
+                            drag to rotate
+                        </div>
+                        <div>
+                            <i class="ti ti-arrows-move"></i> <strong>Right-click</strong> and
+                            drag or
+                            <strong>WASD</strong>
+                            to move
+                        </div>
+                        <div><i class="ti ti-zoom"></i> <strong>Scroll</strong> to zoom</div>
+                        <div><strong>Click <i class="fas fa-pause"></i></strong> to pause</div>
+                    </div>
+                    <button onclick="window.location.href='./interactive.html';" target="_blank"
+        style="font-size: 20px; font-family: 'Arial', sans-serif; background-color: #92A8D1; color: white; margin: 20px auto; display: block; padding: 15px 15px; border: none; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); text-align: center; transition: all 0.3s ease; cursor: pointer;">
+    <span class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"
+                                                style="fill: #ffffff">
+                                                <path
+                                                    d="M256 0c-25.3 0-47.2 14.7-57.6 36c-7-2.6-14.5-4-22.4-4c-35.3 0-64 28.7-64 64V261.5l-2.7-2.7c-25-25-65.5-25-90.5 0s-25 65.5 0 90.5L106.5 437c48 48 113.1 75 181 75H296h8c1.5 0 3-.1 4.5-.4c91.7-6.2 165-79.4 171.1-171.1c.3-1.5 .4-3 .4-4.5V160c0-35.3-28.7-64-64-64c-5.5 0-10.9 .7-16 2V96c0-35.3-28.7-64-64-64c-7.9 0-15.4 1.4-22.4 4C303.2 14.7 281.3 0 256 0zM240 96.1c0 0 0-.1 0-.1V64c0-8.8 7.2-16 16-16s16 7.2 16 16V95.9c0 0 0 .1 0 .1V232c0 13.3 10.7 24 24 24s24-10.7 24-24V96c0 0 0 0 0-.1c0-8.8 7.2-16 16-16s16 7.2 16 16v55.9c0 0 0 .1 0 .1v80c0 13.3 10.7 24 24 24s24-10.7 24-24V160.1c0 0 0-.1 0-.1c0-8.8 7.2-16 16-16s16 7.2 16 16V332.9c-.1 .6-.1 1.3-.2 1.9c-3.4 69.7-59.3 125.6-129 129c-.6 0-1.3 .1-1.9 .2H296h-8.5c-55.2 0-108.1-21.9-147.1-60.9L52.7 315.3c-6.2-6.2-6.2-16.4 0-22.6s16.4-6.2 22.6 0L119 336.4c6.9 6.9 17.2 8.9 26.2 5.2s14.8-12.5 14.8-22.2V96c0-8.8 7.2-16 16-16c8.8 0 16 7.1 16 15.9V232c0 13.3 10.7 24 24 24s24-10.7 24-24V96.1z">
+                                                </path>
+                                            </svg>
+                                        </span>
+        Explore more interactive results for dynamic scene reconstruction!
+</button>
+                    <script>
+                        // Get the paragraph element
+                        var para = document.getElementById('click-interactive');
+
+                        // Add event listeners for mouse enter and mouse leave
+                        para.addEventListener('mouseenter', function () {
+                            para.style.fontSize = '22px'; // Increase font size
+                            para.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)'; // Enhance shadow
+                        });
+
+                        para.addEventListener('mouseleave', function () {
+                            para.style.fontSize = '18px'; // Reset font size
+                            para.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)'; // Reset shadow
+                        });
+                    </script>
+                    <p> See more dynamic reconstruction results on DAVIS dataset in our <a href="./gallery.html">gallery</a>.</p>
+                </div>
+            </div>
+        </div><br>
+    </section>
+
+
+    <section id="video_3d" class="section dynamic-section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full panel-style">
+                    <h2 class="title is-4">3D Reconstruction (Video)</h2>
+
+                    <p>Our method can reconstruct the 3D scenes from videos in a feed-forward, online manner without global
+                        optimization.</p>
+                    <br>
+                    <div id="wrapper" style="
+                    display: flex;
+                    flex-wrap: nowrap;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 2em;
+                  ">
+                        <div class="iframe-container">
+                        <iframe class="vframe"
+                            src="https://egomono4d.github.io/build/?playbackPath=/static/recordings/3d_1_027.viser&initialCameraPosition=-3.44652427,0.10633461,-0.49854992&initialCameraLookAt=-0.16225029,1.00471075,0.03985959&initialCameraUp=-0.09300407,-0.5189403,0.84973596"
+                            loading="lazy"></iframe>
+                        <button onclick="openInNewTab(this)" data-link="https://egomono4d.github.io/build/?playbackPath=/static/recordings/3d_1_027.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0&synchronizedVideoOverlay=/static/recordings/3d_1_027.mp4&baseSpeed=0.5">Open in New Tab for Better Visualization</button>
+                        </div>
+                        <div class="iframe-container">
+                        <iframe class="vframe"
+                            src="https://egomono4d.github.io/build/?playbackPath=/static/recordings/3d_2_018_gd4_2.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0"
+                            loading="lazy"></iframe>
+                        <button onclick="openInNewTab(this)" data-link="https://egomono4d.github.io/build/?playbackPath=/static/recordings/3d_2_018_gd4_2.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=0.0,1.0,0.0&synchronizedVideoOverlay=/static/recordings/3d_2_018.mp4&baseSpeed=0.5">Open in New Tab for Better Visualization</button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="hide-on-touchscreens" style="
+                  display: flex;
+                  justify-content: center;
+                  gap: 1.5em;
+                  padding-top: 0.5em;
+                ">
+                        <div>
+                            <i class="ti ti-view-360-arrow"></i> <strong>Left-click</strong> and
+                            drag to rotate
+                        </div>
+                        <div>
+                            <i class="ti ti-arrows-move"></i> <strong>Right-click</strong> and
+                            drag or
+                            <strong>WASD</strong>
+                            to move
+                        </div>
+                        <div><i class="ti ti-zoom"></i> <strong>Scroll</strong> to zoom</div>
+                        <div><strong>Click <i class="fas fa-pause"></i></strong> to pause</div>
+                    </div>
+                    <br>
+
+                    <!--<h3 class="title is-5">More Video Reconstruction Results</h3> -->
+                    <!--
+                    <br>
+                    <div style="text-align: center; padding: 5px; font-family: Arial, sans-serif; background-color: #ffffff; width: 100%; box-sizing: border-box; display: flex;">
+                        <div style="color: #333; padding: 5px; background-color: #ffffff; margin-right: 4px; border-radius: 5px; flex: 1;">
+                            <span style="font-weight: bold;">Following:</span> <span style="font-weight: normal;">Viewpoint following the camera</span>
+                        </div>
+                        <div style="color: #333; padding: 5px; background-color: #ffffff; margin-left: 4px; border-radius: 5px; flex: 1;">
+                            <span style="font-weight: bold;">Fixed:</span> <span style="font-weight: normal;">Viewpoint fixed in space</span>
+                        </div>
+                    </div>
+
+
+                    <div id="carousel-results" class="carousel">
+                        <div class="item item-vid5">
+                            <video poster="" id="" autoplay playsinline muted loop height="450px" width="auto" loading="lazy">
+                            <source data-src="./static/videos/gallery/codec_3d/teaser_batch_1_005.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="item item-vid5">
+                            <video poster="" id="" autoplay playsinline muted loop height="450px" width="auto" loading="lazy">
+                            <source data-src="./static/videos/gallery/codec_3d/teaser_batch_1_028.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        
+                        <div class="item item-vid5">
+                            <video poster="" id="" autoplay playsinline muted loop height="450px" width="auto" loading="lazy">
+                            <source data-src="./static/videos/gallery/codec_3d/seqs_023.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                    <br>
+                    -->
+                    <p> See more reconstruction results in our <a href="./gallery_3D.html">gallery</a>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="photo" class="section dynamic-section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full panel-style">
+                    <h2 class="title is-4">3D Reconstruction (Photo Collection)</h2>
+
+                    <p>Our method can reconstruct 3D scenes from sparse photo collections in an online manner, processing them as sequences.</p>
+                    <br>
+
+                    <div id="wrapper" style="
+      
+                            flex-wrap: wrap;
+                            justify-content: center;
+                            align-items: center;
+                            gap: 2em;
+                        ">
+                        <!-- <div class="siframe-class">
+                            <div class="image-grid">
+                                <img src="./static/recordings/seq_013_0001.png" alt="Image 1" loading="lazy">
+                                <img src="./static/recordings/seq_013_0002.png" alt="Image 2" loading="lazy">
+                                <img src="./static/recordings/seq_013_0003.png" alt="Image 3" loading="lazy">
+                                <img src="./static/recordings/seq_013_0004.png" alt="Image 4" loading="lazy">
+                            </div>
+                            <div class="iframe-container">
+                            <iframe
+                                src="https://egomono4d.github.io/build/?playbackPath=/static/recordings/seq_013_1_0.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=-1.0,0.0,0.0"
+                                loading="lazy">
+                            </iframe>
+                            <button onclick="openInNewTab(this)" data-link="https://egomono4d.github.io/build/?playbackPath=/static/recordings/seq_013_1_0.viser&initialCameraPosition=0.0,-1.0,1.0&initialCameraLookAt=-1.0,0.0,0.0">Open in New Tab</button>
+                            </div>
+                        </div> -->
+                        <div class="siframe-class">
+                            <div class="image-grid">
+                                <img src="./static/recordings/seqs_017_0001.png" alt="Image 1" loading="lazy">
+                                <img src="./static/recordings/seqs_017_0002.png" alt="Image 2" loading="lazy">
+                                <img src="./static/recordings/seqs_017_0003.png" alt="Image 3" loading="lazy">
+                                <img src="./static/recordings/seqs_017_0004.png" alt="Image 4" loading="lazy">
+                            </div>
+                            <div class="iframe-container">
+                            <iframe
+                                src="https://egomono4d.github.io/build/?playbackPath=/static/recordings/seqs_017_1_0.viser&initialCameraPosition=-6.0,2.5,5.0&initialCameraLookAt=5.0,8.0,0.0"
+                                loading="lazy">
+                            </iframe>
+                            <button onclick="openInNewTab(this)" data-link="https://egomono4d.github.io/build/?playbackPath=/static/recordings/seqs_017_1_0.viser&initialCameraPosition=-6.0,2.5,5.0&initialCameraLookAt=5.0,8.0,0.0">Open in New Tab</button>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="hide-on-touchscreens" style="
+          display: flex;
+          justify-content: center;
+          gap: 1.5em;
+          padding-top: 0.5em;
+        ">
+                        <div>
+                            <i class="ti ti-view-360-arrow"></i> <strong>Left-click</strong> and
+                            drag to rotate
+                        </div>
+                        <div>
+                            <i class="ti ti-arrows-move"></i> <strong>Right-click</strong> and
+                            drag or
+                            <strong>WASD</strong>
+                            to move
+                        </div>
+                        <div><i class="ti ti-zoom"></i> <strong>Scroll</strong> to zoom</div>
+                        <div><strong>Click <i class="fas fa-pause"></i></strong> to pause</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="unseen" class="section dynamic-section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full panel-style">
+                    <h2 class="title is-4">Inferring Unseen Structure</h2>
+                    <p style="max-width: 90%; margin: 0 auto; text-align: left;">
+
+                        In addition to reconstructing scenes from image observations, 
+                        our method can infer unseen structures from virtual viewpoints within the reconstructed scene, predicting colored pointmaps at each virtual view.
+                    </p>
+                    <br>
+                    <video width="90%" controls preload="none" poster="./static/images/unseen_poster.jpg">
+                        <source src="./static/videos/unseen.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div><br>
+    </section>
+    </section>
+
+    <section class="section has-background-light">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">State Analysis</h2>
+                    <div class="columns is-centered has-text-justified">
+                        <p>
+                            Our model continuously updates
+                            its state representation as new data arrives. As more observations become available, the
+                            state should
+                            refine its understanding of the 3D world.
+                            In this section, we demonstrate this capability of our method.
+                        </p>
+                    </div>
+                    <br>
+                    <br>
+
+                    <h2 class="title is-4" id="analysis">Online vs. Revisiting</h2>
+                    <div class="columns is-centered has-text-justified">
+                        <p>
+                            When running our method online, the state has access only to the context available up to the current time,
+                             without information from future observations. Can the model perform better with additional context? 
+                             To explore this, we introduce a new experimental setup called <strong>revisiting</strong>: 
+                             we first run the method through all images so the state can see the full context, 
+                             then freeze this final state and reprocess the same set of images to generate predictions—this operation evaluates the 3D understanding captured by the final state. 
+                             Below, we compare the reconstruction results of the <strong>online</strong> and <strong>revisiting</strong> setups, showing that revisiting produces improved reconstructions.
+
+                        </p>
+                    </div>
+                    <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                        <!-- <div id="state-analysis-input" class="grid-container-1x6">
+                            <img src="./static/glbs/41126410_2253.870.jpg" alt="MY ALT TEXT" loading="lazy" />
+                            <img src="./static/glbs/41126410_2297.086.jpg" alt="MY ALT TEXT" loading="lazy" />
+                            <img src="./static/glbs/41126410_2299.086.jpg" alt="MY ALT TEXT" loading="lazy" />
+                            <img src="./static/glbs/41126410_2301.085.jpg" alt="MY ALT TEXT" loading="lazy" />
+                            <img src="./static/glbs/41126410_2303.084.jpg" alt="MY ALT TEXT" loading="lazy" />
+                            <img src="./static/glbs/41126410_2305.083.jpg" alt="MY ALT TEXT" loading="lazy" />
+                            <img src="./static/glbs/41126410_2307.082.jpg" alt="MY ALT TEXT" loading="lazy" />
+                            <img src="./static/glbs/41126410_2309.081.jpg" alt="MY ALT TEXT" loading="lazy" />
+                            <img src="./static/glbs/41126410_2311.081.jpg" alt="MY ALT TEXT" loading="lazy" />
+                            <img src="./static/glbs/41126410_2313.080.jpg" alt="MY ALT TEXT" loading="lazy" />
+                            <img src="./static/glbs/41126410_2315.079.jpg" alt="MY ALT TEXT" loading="lazy" />
+                            <img src="./static/glbs/41126410_2317.078.jpg" alt="MY ALT TEXT" loading="lazy" />
+                        </div> -->
+                        <br>
+                        <div style="width: 100%;">
+                        <img src="./static/images/revisit2.png" loading="lazy" />
+                    </div>
+                        <p style="color: gray; width: 100%; text-align: justify;">
+                            The images are provided to the model in this order. 
+                            Because the first and second images do not overlap (a significant viewpoint change), the model initially produces 
+                            a suboptimal prediction of the second image, causing the TV and coffee table to overlap (shown below on the left). 
+                            However, when revisiting the scene with the final state (i.e., with the full context), the prediction for the TV, coffee table and sofa become more accurate (shown below on the right).
+                        </p>
+                    </div>
+
+                    <br>
+                    <br>
+                    <div id="wrapper" style="
+                  display: flex;
+                  flex-wrap: nowrap;
+                  justify-content: center;
+                  align-items: center;
+                  gap: 2em;
+                ">
+                        <div class="modelviewer-container">
+                            <h3><strong>Online</strong></h3>
+                            <br>
+                            <model-viewer id="model1" camera-orbit="0.966rad 1.54rad 16.4m"
+                                camera-target="1.33m -0.32m 1.6m" data-src="./static/glbs_gd/revisit-0-new-new.glb"
+                                alt="Online" camera-controls interaction-prompt="none">
+                            </model-viewer>
+                        </div>
+                        <div class="modelviewer-container">
+                            <h3><strong>Revisiting</strong></h3>
+                            <br>
+                            <model-viewer id="model2" camera-orbit="0.966rad 1.54rad 16.4m"
+                                camera-target="1.33m -0.32m 1.6m" data-src="./static/glbs_gd/revisit-1-new-new.glb"
+                                alt="Revisiting" camera-controls interaction-prompt="none">
+                            </model-viewer>
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const modelViewer1 = document.getElementById('model1');
+                            const modelViewer2 = document.getElementById('model2');
+                            const observer1 = new IntersectionObserver((entries) => {
+                                if (entries[0].isIntersecting) {
+                                    const realSrc = modelViewer1.dataset.src;
+                                    modelViewer1.setAttribute('src', realSrc);
+                                    observer1.unobserve(modelViewer1);
+                                }
+                            });
+                            const observer2 = new IntersectionObserver((entries) => {
+                                if (entries[0].isIntersecting) {
+                                    const realSrc = modelViewer2.dataset.src;
+                                    modelViewer2.setAttribute('src', realSrc);
+                                    observer2.unobserve(modelViewer2);
+                                }
+                            });
+                            observer1.observe(modelViewer1);
+                            observer2.observe(modelViewer2);
+                            modelViewer1.addEventListener('load', function () {
+                                const threeCamera = modelViewer1.getCameraOrbit();
+                                const fov = 17.6;
+
+
+                                modelViewer1.camera.fieldOfView = fov;
+                                modelViewer1.camera.updateProjectionMatrix();
+                            });
+                            modelViewer2.addEventListener('load', function () {
+                                const threeCamera = modelViewer2.getCameraOrbit();
+                                const fov = 17.6;
+
+
+                                modelViewer2.camera.fieldOfView = fov;
+                                modelViewer2.camera.updateProjectionMatrix();
+                            });
+                        });
+
+
+                        const model1 = document.getElementById('model1');
+                        const model2 = document.getElementById('model2');
+
+
+                        let syncing = false;
+
+
+                        let syncTimeout1 = null;
+                        let syncTimeout2 = null;
+
+
+                        const SYNC_DELAY_MS = 100;
+
+                        model1.addEventListener('camera-change', () => {
+                            if (!syncing) {
+
+                                if (syncTimeout1) {
+                                    clearTimeout(syncTimeout1);
+                                }
+
+                                syncTimeout1 = setTimeout(() => {
+                                    syncing = true;
+                                    copyCameraSettings(model1, model2);
+                                    requestAnimationFrame(() => {
+                                        syncing = false;
+                                    });
+                                }, SYNC_DELAY_MS);
+                            }
+                        });
+
+
+                        model2.addEventListener('camera-change', () => {
+                            if (!syncing) {
+                                if (syncTimeout2) {
+                                    clearTimeout(syncTimeout2);
+                                }
+                                syncTimeout2 = setTimeout(() => {
+                                    syncing = true;
+                                    copyCameraSettings(model2, model1);
+                                    requestAnimationFrame(() => {
+                                        syncing = false;
+                                    });
+                                }, SYNC_DELAY_MS);
+                            }
+                        });
+
+
+                        function copyCameraSettings(sourceModel, targetModel) {
+
+                            const orbit = sourceModel.getCameraOrbit();
+                            const fieldOfView = sourceModel.getFieldOfView();
+                            const target = sourceModel.getCameraTarget();
+                            targetModel.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius}m`;
+                            targetModel.fieldOfView = `${fieldOfView}deg`;
+                            targetModel.cameraTarget = `${target.x}m ${target.y}m ${target.z}m`;
+
+                            console.log('Camera Orbit:', targetModel.cameraOrbit);
+                            console.log('Camera FOV:', targetModel.fieldOfView);
+                            console.log('Camera Target:', targetModel.cameraTarget);
+                        }
+                    </script>
+                    <br>
+                    <div>
+                        (Results are downsampled for efficient online rendering and synced for ~100ms delay)
+                    </div>
+                    <div class="hide-on-touchscreens" style="
+                display: flex;
+                justify-content: center;
+                gap: 1.5em;
+                padding-top: 0.5em;
+              ">
+                        <div>
+                            <i class="ti ti-view-360-arrow"></i> <strong>Left-click</strong> and
+                            drag to rotate
+                        </div>
+                        <div>
+                            <i class="ti ti-arrows-move"></i> <strong>Right-click</strong> and
+                            drag or
+                            <strong>WASD</strong>
+                            to move
+                        </div>
+                        <div><i class="ti ti-zoom"></i> <strong>Scroll</strong> to zoom</div>
+                    </div>
+
+                    <br>
+                    <br>
+
+                    <h2 class="title is-4">An illusion example</h2>
+                    <div class="columns is-centered has-text-justified">
+                        <p>
+                            We demonstrate our results on an intriguing illusion video. When observing only the first
+                            frame, the scene appears to be a 3D chair due to our prior knowledge. However, with more
+                            observations, it becomes evident that it is actually a 2D plane. Our online reconstruction
+                            results are presented below. Our method captures rich prior knowledge (predicting the first
+                            frame as a 3D chair) but updates its understanding as more observations are processed,
+                            ultimately recognizing the scene as a plane. Notably, even when the final frame of the video closely
+                            resembles the initial one, the model maintains its belief that the scene is flat. This
+                            highlights the state's ability to effectively update based on additional observations.
+                        </p>
+                    </div>
+                    <br>
+                    <div id="wrapper" style="
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 2em;
+          ">
+                        <div style="flex: 1 1 auto;">
+                            <iframe class="large-vframe"
+                                data-src="https://egomono4d.github.io/build/?playbackPath=/static/recordings/chair_illusion.viser&initialCameraPosition=3.09977686,-1.68505675,0.57576257&initialCameraLookAt=0.74977609,-0.36596893,0.43648563&baseSpeed=0.5&synchronizedVideoOverlay=/static/recordings/chair_illusion.mp4">
+                            </iframe>
+                        </div>
+                    </div>
+                    <div class="hide-on-touchscreens" style="
+          display: flex;
+          justify-content: center;
+          gap: 1.5em;
+          padding-top: 0.5em;
+          ">
+                        <div>
+                            <i class="ti ti-view-360-arrow"></i> <strong>Left-click</strong> and
+                            drag to rotate
+                        </div>
+                        <div>
+                            <i class="ti ti-arrows-move"></i> <strong>Right-click</strong> and
+                            drag or
+                            <strong>WASD</strong>
+                            to move
+                        </div>
+                        <div><i class="ti ti-zoom"></i> <strong>Scroll</strong> to zoom</div>
+                        <div><strong>Click <i class="fas fa-pause"></i></strong> to pause</div>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            // Grab the iframe
+                            const lazyIframe = document.querySelector('iframe.large-vframe');
+
+                            // Create the Intersection Observer
+                            const observer = new IntersectionObserver(entries => {
+                                if (entries[0].isIntersecting) {
+                                    // If in view, set the real 'src'
+                                    const realSrc = lazyIframe.dataset.src;
+                                    lazyIframe.src = realSrc;
+
+                                    // Stop observing once loaded
+                                    observer.unobserve(lazyIframe);
+                                }
+                            });
+
+                            // Start observing
+                            observer.observe(lazyIframe);
+                        });
+                    </script>
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+        </div><br>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Method Overview</h2>
+                    <div class="content has-text-centered">
+                        <div>
+                            <img src="./static/images/method1_2-min.jpg" alt="Reconstruction"
+                                class="blend-img-background center-image" width="80%" loading="lazy" />
+                        </div>
+                        <div class="content has-text-justified">
+                            <p>
+                                Given a sequence of images as input, our method performs online dense 3D reconstruction.
+
+                                At the core of our method is a state representation that keeps updating as each new
+                                observation
+                                comes in.
+
+                                Given the current image, we first use a vit encoder to encode it into token
+                                representations.
+                                The image tokens then interact with the state tokens through a joint process of state
+                                update
+                                and
+                                state readout. The final outputs from state readout are the pointmaps and camera
+                                parameters
+                                for
+                                the current observation. At the same time, the state update module incorporates the
+                                current
+                                observation to update the state.
+
+                                We repeat the process for every image, and their outputs accumulate into dense scene
+                                reconstruction over time.
+                            </p>
+                        </div>
+
+                        <div>
+                            <img src="./static/images/method2_2-min.jpg" alt="Inference"
+                                class="blend-img-background center-image" width="80%" loading="lazy" />
+                        </div>
+                        <div class="level-set has-text-justified">
+                            <p>
+                                Not only can our method reconstructs the scene given image observations, it can also
+                                infer
+                                new
+                                structures unseen by the input images.
+                                Given a query camera as shown as the blue camera, we use its raymap to query the current
+                                state
+                                to read out its corresponding point map.
+                                Adding this inferred point map to the existing reconstruction makes the reconstruction
+                                more
+                                complete.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths"><br><br>
+                    <h2 class="title is-3">Acknowledgements</h2>
+                    <div class="content has-text-justified">
+                        We would like to thank Haiwen Feng, Chung Min Kim, Justin Kerr, Songwei Ge,
+                        Chenfeng
+                        Xu, Letian Fu, and Ren Wang for helpful discussions. And we thank Brent Yi for his support on the interactive visualization. We especially thank Noah Snavely for his
+                        guidance and support.
+                        This project is supported in part by DARPA No.~HR001123C0021, IARPA DOI/IBC No.~140D0423C0035,
+                        NSF:CNS-2235013, Bakar Fellows, ONR, MURI, TRI and BAIR sponsors. The views and conclusions
+                        contained herein are those of the authors and do not represent the official policies or
+                        endorsements
+                        of these institutions.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <br>
+
+
+
+
+    <section class="section" id="BibTeX">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-justified">
+                <div class="column is-four-fifths">
+
+                    <h2 class="title">BibTeX</h2>
+                    <pre><code>
+    @misc{cut3r,
+        Author = {Qianqian Wang and Yifei Zhang and Aleksander Holynski and Alexei A. Efros and Angjoo Kanazawa},
+        Title = {Continuous 3D Perception Model with Persistent State},
+        Year = {2025},
+        Eprint = {arXiv:2501.12387},
+        }
+                    </code></pre>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="footer">
+        <div align="center" class="container">
+            <div class="columns is-centered">
+                <div class="content">
+                    Design borrowed from <a href="https://github.com/nerfies/nerfies.github.io">nerfies</a>.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

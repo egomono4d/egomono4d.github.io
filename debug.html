@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Two Equal Columns</title>
+  <style>
+    #wrapper {
+      display: flex;
+      flex-wrap: wrap;         /* allow them to wrap on small screens */
+      justify-content: center; /* center as a group if narrower than wrapper */
+      gap: 2em;                /* spacing between columns */
+      max-width: 1200px;       /* optional max container width */
+      margin: 0 auto;          /* center the entire container */
+    }
+
+    .model-column {
+      flex: 1 0 0;             /* both columns share the space equally */
+      box-sizing: border-box;
+      min-width: 300px;        /* optional: ensures a usable minimum width */
+    }
+
+    /* Just to illustrate. Make sure the <model-viewer> fills its parent */
+    .model-viewer {
+      width: 100%;
+      aspect-ratio: 1;
+      background: #eee; /* helps visualize the space */
+    }
+  </style>
+</head>
+<body>
+  <div id="wrapper">
+    <!-- FIRST COLUMN -->
+    <div class="model-column">
+      <h3><strong>Online</strong></h3>
+      <model-viewer
+        class="model-viewer"
+        camera-orbit="0.966rad 1.54rad 16.4m"
+        camera-target="1.33m -0.32m 1.6m"
+        src="./static/glbs_gd/revisit-0-new-new.glb"
+        alt="Online"
+        camera-controls
+        interaction-prompt="none">
+      </model-viewer>
+    </div>
+
+    <!-- SECOND COLUMN -->
+    <div class="model-column">
+      <h3><strong>Revisiting</strong></h3>
+      <model-viewer
+        class="model-viewer"
+        camera-orbit="0.966rad 1.54rad 16.4m"
+        camera-target="1.33m -0.32m 1.6m"
+        src="./static/glbs_gd/revisit-1-new-new.glb"
+        alt="Revisiting"
+        camera-controls
+        interaction-prompt="none">
+      </model-viewer>
+    </div>
+  </div>
+</body>
+</html>
