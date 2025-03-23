@@ -25,7 +25,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/epic_2.png",
+      "./recordings/epic_2.jpg",
     ],
     [
       "epic_3",
@@ -39,7 +39,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/epic_3.png",
+      "./recordings/epic_3.jpg",
     ],
     [
       "epic_4",
@@ -53,7 +53,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/epic_4.png",
+      "./recordings/epic_4.jpg",
     ],
     [
       "epic_5",
@@ -67,7 +67,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/epic_5.png",
+      "./recordings/epic_5.jpg",
     ],
     [
       "arctic_1",
@@ -81,7 +81,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/arctic_1.png",
+      "./recordings/arctic_1.jpg",
     ],
     [
       "arctic_2",
@@ -95,7 +95,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/arctic_2.png",
+      "./recordings/arctic_2.jpg",
     ],
     [
       "arctic_3",
@@ -109,7 +109,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/arctic_3.png",
+      "./recordings/arctic_3.jpg",
     ],
     [
       "hoi4d_1",
@@ -123,7 +123,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/hoi4d_1.png",
+      "./recordings/hoi4d_1.jpg",
     ],
     [
       "hoi4d_2",
@@ -137,7 +137,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/hoi4d_2.png",
+      "./recordings/hoi4d_2.jpg",
     ],
     [
       "hoi4d_3",
@@ -151,7 +151,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/hoi4d_3.png",
+      "./recordings/hoi4d_3.jpg",
     ],
     [
       "pov_1",
@@ -165,7 +165,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/pov_1.png",
+      "./recordings/pov_1.jpg",
     ],
     [
       "pov_2",
@@ -179,7 +179,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/pov_2.png",
+      "./recordings/pov_2.jpg",
     ],
     [
       "pov_3",
@@ -193,7 +193,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/pov_3.png",
+      "./recordings/pov_3.jpg",
     ],
   ];
   
