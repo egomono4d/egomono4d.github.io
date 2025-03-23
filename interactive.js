@@ -3,7 +3,7 @@ const results = [
       "epic_0",
       [
         "/build/",
-        "?playbackPath=/recordings/4ed63fb1.viser",
+        "?playbackPath=/recordings/recording.viser",
         "&synchronizedVideoOverlay=/recordings/4ed63fb1.mp4",
         "&synchronizedVideoTimeOffset=0.0",
         "&initialCameraPosition=0.0,-1.0,1.0",
@@ -11,7 +11,7 @@ const results = [
         "&baseSpeed=0.5",
         "&darkMode",
       ],
-      "./recordings/4ed63fb1.jpg",
+      "./recordings/4ed63fb1.png",
     ],
     [
       "epic_1",
