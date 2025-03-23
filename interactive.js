@@ -12,7 +12,7 @@ const results = [
         "&darkMode",
       ],
       "./recordings/4ed63fb1.jpg",
-    ]
+    ],
     [
       "epic_1",
       [
